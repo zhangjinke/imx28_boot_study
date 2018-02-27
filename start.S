@@ -1,6 +1,6 @@
 /**
  * \file
- * \brief Æô¶¯ÎÄ¼ş
+ * \brief å¯åŠ¨æ–‡ä»¶
  *
  * \internal
  * \par modification history
@@ -11,22 +11,22 @@
     .global reset
 reset:
 
-    /* ÉèÖÃ CPU Îª SVC32 Ä£Ê½£¬²¢¹Ø±Õ FIQ ºÍ IRQ */
+    /* è®¾ç½® CPU ä¸º SVC32 æ¨¡å¼ï¼Œå¹¶å…³é—­ FIQ å’Œ IRQ */
     mrs r0, cpsr
     bic r0, r0, #0x1f
     orr r0, r0, #0xd3
     msr cpsr, r0
 
-    /* ¹Ø±Õ D cache Ç°ÏÈ flush */
+    /* å…³é—­ D cache å‰å…ˆ flush */
     mov r0, #0
 flush_dcache:
     mrc p15, 0, r15, c7, c10, 3
     bne flush_dcache
 
-    mcr p15, 0, r0, c8, c7, 0 /* Ê§ÄÜ TLB */
-    mcr p15, 0, r0, c7, c5, 0 /* Ê§ÄÜ I Cache */
+    mcr p15, 0, r0, c8, c7, 0 /* å¤±èƒ½ TLB */
+    mcr p15, 0, r0, c7, c5, 0 /* å¤±èƒ½ I Cache */
 
-    /* ¹Ø±Õ MMU ºÍ D cache */
+    /* å…³é—­ MMU å’Œ D cache */
     mrc p15, 0, r0, c1, c0, 0
     bic r0, r0, #0x00000300 /* clear bits 9:8 (---- --RS) */
     bic r0, r0, #0x00000087 /* clear bits 7, 2:0 (B--- -CAM) */
@@ -34,7 +34,7 @@ flush_dcache:
     orr r0, r0, #0x00000002 /* set bit 1 (A) Align */
     mcr p15, 0, r0, c1, c0, 0
 
-    /* ÉèÖÃÕ»Ö¸Õë */
+    /* è®¾ç½®æ ˆæŒ‡é’ˆ */
     ldr sp, =0x1fffc
 
     bl main

@@ -9,8 +9,9 @@
  */
 
 #include <stdint.h>
-#include "led.h"
 #include "delay.h"
+#include "led.h"
+#include "duart.h"
 
 /**
  * \brief 主函数
@@ -18,14 +19,13 @@
 int main (void)
 {
     led_init();
+    duart_init(115200);
+
+    led_on(LED_RUN);
+
+    printf("hello world\n");
 
     while (1) {
-        led_on(LED_RUN);
-        led_off(LED_ERR);
-        mdelay(500);
-
-        led_off(LED_RUN);
-        led_on(LED_ERR);
         mdelay(500);
     }
 }
