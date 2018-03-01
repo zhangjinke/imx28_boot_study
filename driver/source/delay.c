@@ -26,6 +26,14 @@
 *******************************************************************************/
 
 /**
+ * \brief 获取系统滴答
+ */
+uint32_t systick_get (void)
+{
+    return HW_DIGCTL_MICROSECONDS;
+}
+
+/**
  * \brief 延时指定微秒
  */
 void udelay (uint32_t us)

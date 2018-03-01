@@ -20,6 +20,7 @@
 *******************************************************************************/
 
 /* \brief 定义 GPIO 相关寄存器 */
+#define HW_PINCTRL_CTRL    (*(volatile uint32_t *)0x80018000)
 #define HW_PINCTRL_MUXSEL6 (*(volatile uint32_t *)0x80018160)
 
 /* \brief 定义 DUART 相关寄存器 */

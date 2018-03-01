@@ -11,6 +11,11 @@
     .global reset
 reset:
 
+    /* 设置栈指针 */
+    ldr sp, =0x1fffc
+
+    bl main
+
     /* 设置 CPU 为 SVC32 模式，并关闭 FIQ 和 IRQ */
     mrs r0, cpsr
     bic r0, r0, #0x1f
@@ -33,11 +38,6 @@ flush_dcache:
     bic r0, r0, #0x00002000 /* clear bit 13 (--V- ----) */
     orr r0, r0, #0x00000002 /* set bit 1 (A) Align */
     mcr p15, 0, r0, c1, c0, 0
-
-    /* 设置栈指针 */
-    ldr sp, =0x1fffc
-
-    bl main
 
 halt:
     b halt

@@ -18,6 +18,15 @@ extern "C" {
 #include <stdint.h>
 
 /**
+ * \brief 获取系统滴答
+ *
+ * \param 无
+ *
+ * \return 系统从上电之后经过的微秒数
+ */
+uint32_t systick_get (void);
+
+/**
  * \brief 延时指定微秒
  *
  * param[in] us 延时的微秒数
