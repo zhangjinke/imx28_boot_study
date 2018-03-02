@@ -72,14 +72,12 @@ uint32_t ddr2_read_speed_test (uint32_t addr, uint32_t lenth)
     uint32_t           i;
     uint32_t           start_us;
     uint32_t           end_us;
-    volatile uint32_t  temp;
     volatile uint32_t *p_addr   = (uint32_t *)addr;
 
     start_us = systick_get();
     for (i = 0; i < lenth; i++) {
-        temp = *p_addr++;
+        *p_addr++;
     }
-    *--p_addr = temp;
 
     end_us = systick_get();
 
@@ -115,9 +113,9 @@ int ddr2_test (uint32_t addr, uint32_t lenth)
  */
 int ddr2_init (void)
 {
-    uint8_t   emifrac;
-    uint32_t  temp;
-    uint32_t *HW_DRAM_CTL = (uint32_t *)0x800e0000;
+    uint8_t            emifrac;
+    uint32_t           temp;
+    volatile uint32_t *HW_DRAM_CTL = (uint32_t *)0x800e0000;
 
     HW_CLKCTRL_EMI         = 0x80000002;   /* EMI 时钟源配置为 ref_xtal，并配置为 2 分频 */
 

@@ -2,12 +2,12 @@
  * \file
  * \brief 启动文件
  *
+
  * \internal
  * \par modification history
  * - 1.00 18-02-27  pea, first implementation
  * \endinternal
  */
-
 .global _start
 
 /*
@@ -47,7 +47,7 @@ _fiq:           .word fiq
 /*
  * 中断处理函数
  */
-    .align  5
+.align  5
 undefined_instruction:
 software_interrupt:
 prefetch_abort:
@@ -58,6 +58,7 @@ fiq:
 1:
     bl  1b          /* hang and never return */
 
+.align  2
 /*
  * 复位中断处理函数
  */
