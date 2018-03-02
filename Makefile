@@ -20,6 +20,7 @@ study.elf : start.o main.o driver/source/led.o driver/source/delay.o driver/sour
 	$(LD) $(LDLAGS) $^ -o $@ $(LIBPATH)
 	$(OBJCOPY) -O binary -S $@ study.bin
 	$(OBJDUMP) -D $@ > study.dis
+	elftosb -f imx28 -c ./boot_ivt.bd -o study.sb
 	$(SIZE) --format=berkeley "$@"
 
 %.o : %.S
@@ -31,7 +32,10 @@ study.elf : start.o main.o driver/source/led.o driver/source/delay.o driver/sour
 gdb :
 	$(GDB)
 
+sb:
+	sb_loader.bat
+
 clean :
-	@rm -rfv *.o *.map *.elf *.bin *.dis driver/source/*.o
+	@rm -rfv *.o *.map *.elf *.bin *.dis *.sb driver/source/*.o
 
 .PHONY : clean gdb

@@ -1,0 +1,9 @@
+sources {
+	power_prep="study.elf";
+}
+
+section (0) {
+    load power_prep;
+    load ivt (entry = power_prep:_start) > 0x8000;
+    hab call 0x8000;
+}

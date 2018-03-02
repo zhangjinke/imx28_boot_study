@@ -1,7 +1,7 @@
 
 MEMORY
 {
-    OCRAM (rwx) : ORIGIN = 0x00000000, LENGTH = 128K
+    OCRAM (rwx) : ORIGIN = 1024, LENGTH = 128K
 }
 
 SECTIONS

@@ -26,18 +26,16 @@ void delay_test (volatile uint32_t ms)
  */
 int main (void)
 {
-//    clkctrl_deinit();
     led_init();
     duart_init(115200);
+    clkctrl_init();
     ddr2_init();
-    //clkctrl_init();
-
-    mdelay(100);
 
     led_on(LED_RUN);
 
     printf("hello world\r\n");
 
+#if 1
     if (ddr2_test(0x40000000, 1024) != 0) {
         printf("ddr2_test failed\r\n");
     } else {
@@ -52,6 +50,7 @@ int main (void)
 
     printf("ddr2 read speed is %d KB/s\r\n", 
            ddr2_read_speed_test(0x40000000, 1024 * 1024 / 4));
+#endif
 
     while (1) {
         led_on(LED_RUN);

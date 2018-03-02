@@ -13,6 +13,7 @@
 *******************************************************************************/
 #include <stdint.h>
 #include "clkctrl.h"
+#include "duart.h"
 
 /*******************************************************************************
   宏定义
@@ -54,19 +55,36 @@
 *******************************************************************************/
 
 /**
+ * \brief 打印 CLKCTRL 的寄存器值
+ */
+void clkctrl_reg_print (void)
+{
+    printf("\r\n");
+    printf("HW_CLKCTRL_PLL0CTRL0 : 0x%08x\r\n", HW_CLKCTRL_PLL0CTRL0);
+    printf("HW_CLKCTRL_PLL0CTRL1 : 0x%08x\r\n", HW_CLKCTRL_PLL0CTRL1);
+    printf("HW_CLKCTRL_CPU       : 0x%08x\r\n", HW_CLKCTRL_CPU);
+    printf("HW_CLKCTRL_HBUS      : 0x%08x\r\n", HW_CLKCTRL_HBUS);
+    printf("HW_CLKCTRL_XBUS      : 0x%08x\r\n", HW_CLKCTRL_XBUS);
+    printf("HW_CLKCTRL_XTAL      : 0x%08x\r\n", HW_CLKCTRL_XTAL);
+    printf("HW_CLKCTRL_EMI       : 0x%08x\r\n", HW_CLKCTRL_EMI);
+    printf("HW_CLKCTRL_FRAC0     : 0x%08x\r\n", HW_CLKCTRL_FRAC0);
+    printf("HW_CLKCTRL_FRAC1     : 0x%08x\r\n", HW_CLKCTRL_FRAC1);
+    printf("HW_CLKCTRL_CLKSEQ    : 0x%08x\r\n", HW_CLKCTRL_CLKSEQ);
+    printf("HW_CLKCTRL_RESET     : 0x%08x\r\n", HW_CLKCTRL_RESET);
+    printf("HW_CLKCTRL_STATUS    : 0x%08x\r\n", HW_CLKCTRL_STATUS);
+}
+
+/**
  * \brief 将系统时钟恢复为默认设置
  */
 void clkctrl_deinit (void)
 {
+    HW_CLKCTRL_CLKSEQ    = 0x004483FF;
     HW_CLKCTRL_CPU       = 0x00010001;
     HW_CLKCTRL_XBUS      = 0x00000100;
     HW_CLKCTRL_HBUS      = 0x00000001;
-//    HW_CLKCTRL_CLKSEQ    = 0x004483FF;
-    HW_CLKCTRL_CLKSEQ   |= (1 << 18) | (1 << 14);
-//    HW_CLKCTRL_FRAC0     = 0x92929292;
-    HW_CLKCTRL_FRAC0   |= (1 << 7);
-//    HW_CLKCTRL_PLL0CTRL0 = 0x00000000;
-//    HW_CLKCTRL_PLL0CTRL0 &= ~((1 << 17) | (1 << 18));
+    HW_CLKCTRL_FRAC0     = 0x92929292;
+    HW_CLKCTRL_PLL0CTRL0 = 0x00000000;
 }
 
 /**
@@ -74,8 +92,10 @@ void clkctrl_deinit (void)
  */
 void clkctrl_init (void)
 {
-    uint8_t cpufrac;
+    uint8_t  cpufrac;
     uint32_t temp;
+
+    clkctrl_deinit();
 
     /* 使能 PLL0 并等待锁定完成 */
     HW_CLKCTRL_PLL0CTRL0 |= (1 << 17);
@@ -87,9 +107,13 @@ void clkctrl_init (void)
     HW_CLKCTRL_FRAC0 = temp | ((cpufrac << 0) & (0x3f << 0));
     HW_CLKCTRL_FRAC0 &= ~(1 << 7);
 
-    /* 使能并配置 ref_cpu 为 454MHz */
+    /* 配置 CLK_H 为 CLK_P 的 1 分频(227MHz) */
+    temp = HW_CLKCTRL_HBUS & ~(0x1f << 0);
+    HW_CLKCTRL_HBUS = temp | (1 << 0);
+
+    /* 配置 CLK_P 为 ref_cpu 的 2 分频(227MHz) */
     temp = HW_CLKCTRL_CPU & ~(0x3f << 0);
-    HW_CLKCTRL_CPU = temp | (1 << 0);
+    HW_CLKCTRL_CPU = temp | (2 << 0);
 
     /* 选择 CPU 时钟源为 ref_cpu */
     HW_CLKCTRL_CLKSEQ &= ~(1 << 18);

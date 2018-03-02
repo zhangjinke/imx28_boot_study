@@ -115,11 +115,19 @@ int ddr2_test (uint32_t addr, uint32_t lenth)
  */
 int ddr2_init (void)
 {
+    uint8_t   emifrac;
+    uint32_t  temp;
     uint32_t *HW_DRAM_CTL = (uint32_t *)0x800e0000;
 
-    HW_CLKCTRL_EMI         = 0x80000002;   /* 使能 EMI 时钟，并配置为 2 分频 */
-    HW_CLKCTRL_FRAC0       = 0x92921613;   /* 配置 EMIFRAC = 22(392.7MHz)，CPUFRAC = 19(454.7MHz) */
-    HW_CLKCTRL_CLKSEQ      &= ~0x00000080; /* EMI 时钟源配置为 ref_emi */
+    HW_CLKCTRL_EMI         = 0x80000002;   /* EMI 时钟源配置为 ref_xtal，并配置为 2 分频 */
+
+    /* 使能并配置 ref_emi 为 392MHz */
+    emifrac = 480 * 18 / 392; /* emifrac = 480 * 18 / ref_emi */
+    temp = HW_CLKCTRL_FRAC0 & ~(0x3f << 8);
+    HW_CLKCTRL_FRAC0 = temp | ((emifrac << 8) & (0x3f << 8));
+    HW_CLKCTRL_FRAC0 &= ~(1 << 15);
+
+    HW_CLKCTRL_CLKSEQ      &= ~(1 << 7); /* EMI 时钟源配置为 ref_emi */
     HW_POWER_VDDACTRL      = 0x0000270C;   /* 配置 VDDA 为 1.8V，配置 BO_OFFSET 为 1.575V，配置 Linear 电压比 DC-DC 低 25Mv */
     HW_PINCTRL_CTRL        &= ~0xC0000000; /* 使能 PINCTRL 的时钟，取消 PINCTRL 的复位 */
     HW_PINCTRL_EMI_DS_CTRL = 0x00032AAA;   /* 配置引脚为 DDR2 模式，驱动能力为 20Ma */
@@ -127,7 +135,7 @@ int ddr2_init (void)
     HW_PINCTRL_MUXSEL11    = 0x00000000;   /* 使能 EMI 引脚 */
     HW_PINCTRL_MUXSEL12    = 0x00000000;   /* 使能 EMI 引脚 */
     HW_PINCTRL_MUXSEL13    = 0x00000000;   /* 使能 EMI 引脚 */
-    HW_CLKCTRL_EMI         = 0x00000002;   /* CLK_EMI 为 ref_emi 的 2 分频(196.35MHz) */
+    HW_CLKCTRL_EMI         = 0x00000002;   /* EMI 时钟源配置为 ref_emi，且为 2 分频(196.35MHz) */
 
     HW_DRAM_CTL[0] = 0x00000000;
     HW_DRAM_CTL[1] = 0x00000000;

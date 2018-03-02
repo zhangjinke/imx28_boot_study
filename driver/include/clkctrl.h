@@ -17,6 +17,14 @@ extern "C" {
 
 #include <stdint.h>
 
+/**
+ * \brief 打印 CLKCTRL 的寄存器值
+ *
+ * \param 无
+ *
+ * \return 无
+ */
+void clkctrl_reg_print (void);
 
 /**
  * \brief 将系统时钟恢复为默认设置
