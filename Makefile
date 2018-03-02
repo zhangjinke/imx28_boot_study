@@ -16,7 +16,7 @@ OBJDUMP = $(CROSS_COMPILE)objdump
 SIZE    = $(CROSS_COMPILE)size
 GDB     = $(CROSS_COMPILE)gdb
 
-study.elf : start.o main.o driver/source/led.o driver/source/delay.o driver/source/duart.o driver/source/ddr2.o driver/source/clkctrl.o
+study.elf : start.o main.o driver/source/led.o driver/source/delay.o driver/source/duart.o driver/source/ddr2.o driver/source/clkctrl.o driver/source/relocate.o
 	$(LD) $(LDLAGS) $^ -o $@ $(LIBPATH)
 	$(OBJCOPY) -O binary -S $@ study.bin
 	$(OBJDUMP) -D $@ > study.dis

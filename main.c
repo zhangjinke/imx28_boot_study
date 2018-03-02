@@ -28,8 +28,6 @@ int main (void)
 {
     led_init();
     duart_init(115200);
-    clkctrl_init();
-    ddr2_init();
 
     led_on(LED_RUN);
 

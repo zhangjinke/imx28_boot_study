@@ -1,35 +1,39 @@
 
 MEMORY
 {
-    OCRAM (rwx) : ORIGIN = 1024, LENGTH = 128K
+    OCRAM (rwx) : ORIGIN = 0x00000000, LENGTH = 128K
+    DDR2  (rwx) : ORIGIN = 0x40000000, LENGTH = 64M
 }
 
 SECTIONS
 {
     . = 0x00000000;
-    
+
     . = ALIGN(4);
-    .text : 
+    .text :
     {
+        _stext = .;
         start.o (.text)
-        *(.text) 
+        *(.text)
     } > OCRAM
 
     . = ALIGN(4);
-    .rodata : 
+    .rodata :
     {
-        *(.rodata) 
+        *(.rodata)
     } > OCRAM
 
     . = ALIGN(4);
-    .data : 
+    .data :
     {
-        *(.data) 
+        *(.data)
     } > OCRAM
 
     . = ALIGN(4);
-    .bss : 
+    .bss :
     {
-        *(.bss) 
+        _sbss = .;
+        *(.bss)
+        _ebss = .;
     } > OCRAM
 }

@@ -9,7 +9,7 @@ monitor sleep 300
 # Set JTAG speed to auto
 monitor speed 12000
 
-monitor reg pc = 1024
+#monitor reg pc = 1024
 
 load
 

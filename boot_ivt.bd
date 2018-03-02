@@ -1,5 +1,5 @@
 sources {
-	power_prep="study.elf";
+    power_prep="study.elf";
 }
 
 section (0) {
