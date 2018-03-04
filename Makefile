@@ -26,6 +26,7 @@ OBJS += driver/source/ddr2.o
 OBJS += driver/source/clkctrl.o
 OBJS += driver/source/relocate.o
 OBJS += driver/source/power.o
+OBJS += driver/source/lcdif.o
 
 study.elf : $(OBJS)
 	$(LD) $(LDLAGS) $^ -o $@ $(LIBPATH)

@@ -14,6 +14,7 @@
 #include "duart.h"
 #include "ddr2.h"
 #include "clkctrl.h"
+#include "lcdif.h"
 
 void delay_test (volatile uint32_t ms)
 {
@@ -28,7 +29,9 @@ int main (void)
 {
     led_init();
     duart_init(115200);
+    lcdif_init();
 
+    lcd_enable();
     led_on(LED_RUN);
 
     printf("hello world\r\n");
