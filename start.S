@@ -90,11 +90,14 @@ reset:
     /* 设置栈指针 */
     ldr sp, =0x1fffc
 
+    ldr r0, =115200
+    bl duart_init
+
     bl clkctrl_init
 
     bl ddr2_init
 
-    //bl relocate
+    bl relocate
 
     bl main
     //ldr pc, =0x400000f0

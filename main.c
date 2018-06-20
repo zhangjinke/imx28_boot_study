@@ -28,7 +28,6 @@ void delay_test (volatile uint32_t ms)
 int main (void)
 {
     led_init();
-    duart_init(115200);
     lcdif_init();
 
     lcd_enable();

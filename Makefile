@@ -3,7 +3,8 @@ CFLAGS = -mcpu=arm926ej-s -nostdlib -nostartfiles -ffreestanding -static -g3 -Wa
 LDLAGS = -T link.lds -nostdlib -nostartfiles -static -Map "study.map"
 #LIBPATH = -lgcc -L"C:\Program Files (x86)\GNU Tools ARM Embedded\5.4 2016q2\lib\gcc\arm-none-eabi\5.4.1"
 #LIBPATH = -lgcc -L"/home/peace/workspaces/tools/gcc-linaro-7.1.1-2017.05-x86_64_arm-linux-gnueabi/lib/gcc/arm-linux-gnueabi/7.1.1"
-LIBPATH = -lgcc -L"/home/peace/workspaces/tools/gcc-arm-none-eabi-5_4-2016q3/lib/gcc/arm-none-eabi/5.4.1/"
+#LIBPATH = -lgcc -L"/home/peace/workspaces/tools/gcc-arm-none-eabi-5_4-2016q3/lib/gcc/arm-none-eabi/5.4.1/"
+LIBPATH = -lgcc -L"/c/Program Files (x86)/GNU Tools ARM Embedded/5.4 2016q3/lib/gcc/arm-none-eabi/5.4.1"
 
 CROSS_COMPILE ?= arm-none-eabi-
 #CROSS_COMPILE ?= arm-linux-gnueabi-
@@ -45,7 +46,7 @@ gdb :
 
 sb:
 	./elftosb.exe -f imx28 -c ./boot_ivt.bd -o study.sb
-	sb_loader.bat
+	./sb_loader.bat
 
 clean :
 	@rm -rfv *.o *.map *.elf *.bin *.dis *.sb driver/source/*.o
