@@ -203,6 +203,8 @@ int duart_init (uint32_t baudrate)
     /* 使能 TX RX 和 DUART */
     HW_UARTDBG_CR = (0x03 << 8) | (0x01 << 0);
 
+    //printf("duart init done\r\n");
+
     return 0;
 }
 

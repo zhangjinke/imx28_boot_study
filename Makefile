@@ -41,12 +41,15 @@ study.elf : $(OBJS)
 %.o : %.c
 	$(CC) $(CFLAGS) -c -o $@ $^
 
-gdb :
+gdb : study.elf
 	$(GDB)
 
-sb:
+sb: study.elf
 	./elftosb.exe -f imx28 -c ./boot_ivt.bd -o study.sb
 	./sb_loader.bat
+
+bin: study.elf
+	JLink.exe -autoconnect 1 -Device ARM9 -If JTAG -JTAGConf -1,-1 -Speed 15000 -CommanderScript CommandFile.jlink
 
 clean :
 	@rm -rfv *.o *.map *.elf *.bin *.dis *.sb driver/source/*.o

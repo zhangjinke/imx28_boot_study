@@ -1,0 +1,11 @@
+f
+r
+h
+loadbin study.bin, 4
+verifybin study.bin 4
+setpc 4
+h
+g
+sleep 500
+h
+qc

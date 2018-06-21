@@ -90,17 +90,28 @@ reset:
     /* 设置栈指针 */
     ldr sp, =0x1fffc
 
+    /* 初始化 LED */
+    bl led_init
+
+    /* 点亮 LED RUN */
+    ldr r0, =0
+    bl led_on
+
+    /* 初始化调试串口 */
     ldr r0, =115200
     bl duart_init
 
+    /* 初始化时钟 */
     bl clkctrl_init
 
+    /* 初始化 DDR */
     bl ddr2_init
 
+    /* 重定位到 DDR */
     bl relocate
 
-    bl main
-    //ldr pc, =0x400000f0
+    //bl main
+    ldr pc, =main
 
 halt:
     b halt
