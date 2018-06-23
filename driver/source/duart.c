@@ -204,6 +204,23 @@ int duart_init (uint32_t baudrate)
     HW_UARTDBG_CR = (0x03 << 8) | (0x01 << 0);
 
     //printf("duart init done\r\n");
+    putchar('d');
+    putchar('u');
+    putchar('a');
+    putchar('r');
+    putchar('t');
+    putchar(' ');
+    putchar('i');
+    putchar('n');
+    putchar('i');
+    putchar('t');
+    putchar(' ');
+    putchar('d');
+    putchar('o');
+    putchar('n');
+    putchar('e');
+    putchar('\r');
+    putchar('\n');
 
     return 0;
 }

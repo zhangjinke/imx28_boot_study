@@ -11,18 +11,17 @@
 /*******************************************************************************
   头文件包含
 *******************************************************************************/
+#include "led.h"
+#include "pinctrl.h"
 #include <stdint.h>
 #include <stdbool.h>
-#include "led.h"
 
 /*******************************************************************************
   宏定义
 *******************************************************************************/
 
-/* \brief 定义 GPIO 相关寄存器 */
-#define HW_PINCTRL_MUXSEL3 (*(volatile uint32_t *)0x80018130)
-#define HW_PINCTRL_DOE1    (*(volatile uint32_t *)0x80018B10)
-#define HW_PINCTRL_DOUT1   (*(volatile uint32_t *)0x80018710)
+#define __LED_RUN_PIN  PIN_ID(1, 22) /**< \brief LED_RUN 引脚号 */
+#define __LED_ERR_PIN  PIN_ID(1, 23) /**< \brief LED_ERR 引脚号 */
 
 /*******************************************************************************
   外部函数定义
@@ -34,9 +33,9 @@
 void led_on (uint32_t id)
 {
     if (LED_RUN == id) {
-        HW_PINCTRL_DOUT1 &= ~(1 << 22);
+        pinctrl_dout_set(__LED_RUN_PIN, 0);
     } else {
-        HW_PINCTRL_DOUT1 &= ~(1 << 23);
+        pinctrl_dout_set(__LED_ERR_PIN, 0);
     }
 }
 
@@ -46,9 +45,9 @@ void led_on (uint32_t id)
 void led_off (uint32_t id)
 {
     if (LED_RUN == id) {
-        HW_PINCTRL_DOUT1 |= (1 << 22);
+        pinctrl_dout_set(__LED_RUN_PIN, 1);
     } else {
-        HW_PINCTRL_DOUT1 |= (1 << 23);
+        pinctrl_dout_set(__LED_ERR_PIN, 1);
     }
 }
 
@@ -59,14 +58,14 @@ void led_init (void)
 {
     led_off(LED_RUN);
     led_off(LED_ERR);
-    
+
     /* 将 GPIO1_22 和 GPIO1_23 选择为 GPIO */
-    HW_PINCTRL_MUXSEL3 |= (0x03 << 12);
-    HW_PINCTRL_MUXSEL3 |= (0x03 << 14);
-    
+    pinctrl_muxsel_set(__LED_RUN_PIN, 3);
+    pinctrl_muxsel_set(__LED_ERR_PIN, 3);
+
     /* 使能 GPIO1_22 和 GPIO1_23 */
-    HW_PINCTRL_DOE1 |= (1 << 22);
-    HW_PINCTRL_DOE1 |= (1 << 23);
+    pinctrl_doe_set(__LED_RUN_PIN, 1);
+    pinctrl_doe_set(__LED_ERR_PIN, 1);
 }
 
 /* end of file */

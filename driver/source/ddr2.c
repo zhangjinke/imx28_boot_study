@@ -328,6 +328,8 @@ int ddr2_init (void)
 
     HW_DRAM_CTL[16] = 0x00000001;
 
+    mdelay(1);
+
     return 0;
 }
 

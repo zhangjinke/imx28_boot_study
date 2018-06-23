@@ -1,11 +1,10 @@
 f
 r
 h
-loadbin study.bin, 4
-verifybin study.bin 4
-setpc 4
-h
+loadbin study.bin, 0
+verifybin study.bin 0
+setpc 0
 g
-sleep 500
-h
+#sleep 500
+#h
 qc
