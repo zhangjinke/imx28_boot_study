@@ -20,9 +20,7 @@ extern "C" {
 
 /** \brief 定义 LCDIF 寄存器结构体 */
 struct imx28_lcdif_regs {
-    struct imx28_reg_32  ctrl;           /**< \brief 控制寄存器 */
-    struct imx28_reg_32  ctrl1;          /**< \brief 控制寄存器 1 */
-    struct imx28_reg_32  ctrl2;          /**< \brief 控制寄存器 2 */
+    struct imx28_reg_32  ctrl[3];        /**< \brief 控制寄存器 */
     struct normal_reg_32 transfer_count; /**< \brief 有效数据计数器 */
     struct normal_reg_32 cur_buf;        /**< \brief 当前帧地址 */
     struct normal_reg_32 next_buf;       /**< \brief 下一帧地址 */
@@ -32,16 +30,8 @@ struct imx28_lcdif_regs {
     struct normal_reg_32 vdctrl2;        /**< \brief VSYNC/Dotclk 模式控制寄存器 2 */
     struct normal_reg_32 vdctrl3;        /**< \brief VSYNC/Dotclk 模式控制寄存器 3 */
     struct normal_reg_32 vdctrl4;        /**< \brief VSYNC/Dotclk 模式控制寄存器 4 */
-    struct normal_reg_32 dvictrl0;       /**< \brief 0x0c0 */
-    struct normal_reg_32 dvictrl1;       /**< \brief 0x0d0 */
-    struct normal_reg_32 dvictrl2;       /**< \brief 0x0e0 */
-    struct normal_reg_32 dvictrl3;       /**< \brief 0x0f0 */
-    struct normal_reg_32 dvictrl4;       /**< \brief 0x100 */
-    struct normal_reg_32 csc_coeff0;     /**< \brief 0x110 */
-    struct normal_reg_32 csc_coeff1;     /**< \brief 0x120 */
-    struct normal_reg_32 csc_coeff2;     /**< \brief 0x130 */
-    struct normal_reg_32 csc_coeff3;     /**< \brief 0x140 */
-    struct normal_reg_32 csc_coeff4;     /**< \brief 0x150 */
+    struct normal_reg_32 dvictrl[5];     /**< \brief 0x0c0 */
+    struct normal_reg_32 csc_coeff[5];   /**< \brief 0x110 */
     struct normal_reg_32 csc_offset;     /**< \brief 0x160 */
     struct normal_reg_32 csc_limit;      /**< \brief 0x170 */
     struct normal_reg_32 data;           /**< \brief 0x180 */
@@ -49,9 +39,7 @@ struct imx28_lcdif_regs {
     struct normal_reg_32 crc_stat;       /**< \brief 0x1a0 */
     struct normal_reg_32 stat;           /**< \brief 0x1b0 */
     struct normal_reg_32 version;        /**< \brief 0x1c0 */
-    struct normal_reg_32 debug0;         /**< \brief 0x1d0 */
-    struct normal_reg_32 debug1;         /**< \brief 0x1e0 */
-    struct normal_reg_32 debug2;         /**< \brief 0x1f0 */
+    struct normal_reg_32 debug[3];       /**< \brief 0x1d0 */
 };
 
 #define LCDIF_CTRL_SFTRST                     (1 << 31)

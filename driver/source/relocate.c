@@ -13,6 +13,7 @@
 *******************************************************************************/
 #include <stdint.h>
 #include "relocate.h"
+#include "io.h"
 
 /*******************************************************************************
   外部变量声明
@@ -29,9 +30,8 @@ extern uint32_t _ebss;
 /**
  * \brief 代码重定位
  */
-void relocate (void)
+void relocate (volatile uint32_t *p_src_start)
 {
-    volatile uint32_t *p_src_start  = (uint32_t *)0;
     volatile uint32_t *p_dest_start = (uint32_t *)&_stext;
     volatile uint32_t *p_dest_end   = (uint32_t *)&_sbss;
     volatile uint32_t *p_bss_end    = (uint32_t *)&_ebss;

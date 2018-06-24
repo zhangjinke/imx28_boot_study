@@ -24,7 +24,7 @@ extern "C" {
  *
  * \return 无
  */
-void relocate (void);
+void relocate (volatile uint32_t *p_src_start);
 
 #ifdef __cplusplus
 }

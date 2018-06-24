@@ -1,10 +1,11 @@
 
-CFLAGS = -mcpu=arm926ej-s -nostdlib -nostartfiles -ffreestanding -static -g3 -Wall -O0 -I"driver/include" -I"driver/source"
+CFLAGS = -mtune=arm926ej-s -nostdlib -nostartfiles -ffreestanding -static -g3 -Wall -O0 -I"driver/include" -I"driver/source"
 LDLAGS = -T link.lds -nostdlib -nostartfiles -static -Map "study.map"
 #LIBPATH = -lgcc -L"C:\Program Files (x86)\GNU Tools ARM Embedded\5.4 2016q2\lib\gcc\arm-none-eabi\5.4.1"
 #LIBPATH = -lgcc -L"/home/peace/workspaces/tools/gcc-linaro-7.1.1-2017.05-x86_64_arm-linux-gnueabi/lib/gcc/arm-linux-gnueabi/7.1.1"
 #LIBPATH = -lgcc -L"/home/peace/workspaces/tools/gcc-arm-none-eabi-5_4-2016q3/lib/gcc/arm-none-eabi/5.4.1/"
 LIBPATH = -lgcc -L"/c/Program Files (x86)/GNU Tools ARM Embedded/5.4 2016q3/lib/gcc/arm-none-eabi/5.4.1"
+#LIBPATH = -lgcc -L"/d/Program Files/gcc-linaro-7.2.1-2017.11-i686-mingw32_arm-linux-gnueabi/lib/gcc/arm-linux-gnueabi/7.2.1"
 
 CROSS_COMPILE ?= arm-none-eabi-
 #CROSS_COMPILE ?= arm-linux-gnueabi-

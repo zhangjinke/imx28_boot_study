@@ -97,6 +97,9 @@ reset:
     ldr r0, =0
     bl led_on
 
+    ldr r0, =50
+    bl mdelay
+
     /* 初始化调试串口 */
     ldr r0, =115200
     bl duart_init
@@ -108,6 +111,7 @@ reset:
     bl ddr2_init
 
     /* 重定位到 DDR */
+    ldr r0, =0
     bl relocate
 
     //bl main

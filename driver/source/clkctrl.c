@@ -63,17 +63,17 @@ void clkctrl_init (void)
     temp &= ~CLKCTRL_FRAC_CLKGATE;
     writel(temp, &p_regs->frac[0].reg);
 
-    /* 配置 CLK_H 为 CLK_P 的 1 分频(227MHz) */
-    temp = readl(&p_regs->hbus.reg);
-    temp &= CLKCTRL_HBUS_DIV_MASK;
-    temp |= 1 << CLKCTRL_HBUS_DIV_OFFSET;
-    writel(temp, &p_regs->hbus.reg);
-
-    /* 配置 CLK_P 为 ref_cpu 的 2 分频(227MHz) */
+    /* 配置 CLK_P(内核时钟) 为 ref_cpu 的 2 分频(227MHz) */
     temp = readl(&p_regs->cpu.reg);
     temp &= ~CLKCTRL_CPU_DIV_CPU_MASK;
     temp |= 2 << CLKCTRL_CPU_DIV_CPU_OFFSET;
     writel(temp, &p_regs->cpu.reg);
+
+    /* 配置 CLK_H(AHB/APBH 时钟) 为 CLK_P 的 1 分频(227MHz) */
+    temp = readl(&p_regs->hbus.reg);
+    temp &= CLKCTRL_HBUS_DIV_MASK;
+    temp |= 1 << CLKCTRL_HBUS_DIV_OFFSET;
+    writel(temp, &p_regs->hbus.reg);
 
     /* 选择 CPU 时钟源为 ref_cpu */
     writel(CLKCTRL_CLKSEQ_BYPASS_CPU, &p_regs->clkseq.clr);
