@@ -104,6 +104,27 @@ void lcd_disable (void)
     pinctrl_dout_set(__LED_PIN, 0);
 }
 
+static uint16_t buf[272][480];
+
+struct ctfb_res_modes {
+    int xres;       /* visible resolution       */
+    int yres;
+    int refresh;        /* vertical refresh rate in hz  */
+    /* Timing: All values in pixclocks, except pixclock (of course) */
+    int pixclock;       /* pixel clock in ps (pico seconds) */
+    int pixclock_khz;   /* pixel clock in kHz           */
+    int left_margin;    /* time from sync to picture    */
+    int right_margin;   /* time from picture to sync    */
+    int upper_margin;   /* time from sync to picture    */
+    int lower_margin;
+    int hsync_len;      /* length of horizontal sync    */
+    int vsync_len;      /* length of vertical sync  */
+    int sync;       /* see FB_SYNC_*        */
+    int vmode;      /* see FB_VMODE_*       */
+};
+
+struct ctfb_res_modes mode;
+
 /**
  * \brief 初始化 LCD
  */
@@ -111,23 +132,136 @@ void lcdif_init (void)
 {
     struct imx28_lcdif_regs   *p_regs         = (struct imx28_lcdif_regs *)IMX28_LCDIF_BASE;
     struct imx28_clkctrl_regs *p_clkctrl_regs = (struct imx28_clkctrl_regs *)IMX28_CLKCTRL_BASE;
+    int32_t                    i;
+    int32_t                    j;
+    uint16_t                   k;
     uint32_t                   temp;
     uint8_t                    pixfrac;
 
+    mode.xres = 480;
+    mode.yres = 272;
+    mode.left_margin = 40;
+    mode.right_margin = 5;
+    mode.upper_margin = 8;
+    mode.lower_margin = 8;
+    mode.hsync_len = 1;
+    mode.vsync_len = 1;
+
+    for (i = 0; i < 272; i++) {
+        for (j = 0; j < 480; j++) {
+            //if ((271 == i) || (0 == i) || (479 == j) || (0 == j)) {
+            //    buf[i][j] = 0xffff;
+            //} else {
+            //    buf[i][j] = 0;
+            //}
+            if (60 * 1 > j) {
+                buf[i][j] = (0 << 12) | (0 << 6) | (0 << 0);
+            } else if (60 * 2 > j) {
+                buf[i][j] = (0 << 12) | (0 << 6) | (255 << 0);
+            } else if (60 * 3 > j) {
+                buf[i][j] = (0 << 12) | (255 << 6) | (0 << 0);
+            } else if (60 * 4 > j) {
+                buf[i][j] = (0 << 12) | (255 << 6) | (255 << 0);
+            } else if (60 * 5 > j) {
+                buf[i][j] = (255 << 12) | (0 << 6) | (0 << 0);
+            } else if (60 * 6 > j) {
+                buf[i][j] = (255 << 12) | (0 << 6) | (255 << 0);
+            } else if (60 * 7 > j) {
+                buf[i][j] = (255 << 12) | (255 << 6) | (0 << 0);
+            } else {
+                buf[i][j] = (255 << 12) | (255 << 6) | (255 << 0);
+            }
+        }
+    }
+
     __gpio_init();
 
-    /* 使能并配置 ref_pix 为 454MHz */
-    pixfrac = (480 * 18 / 454) & CLKCTRL_FRAC_FRAC_MASK; /* pixfrac = 480 * 18 / ref_cpu */
+    writel(CLKCTRL_CLKSEQ_BYPASS_DIS_LCDIF, &p_clkctrl_regs->clkseq.clr);
+
+    /* 使能并配置 ref_pix 为 270MHz */
+    pixfrac = (480 * 18 / 270) & CLKCTRL_FRAC_FRAC_MASK;
+    writel(CLKCTRL_FRAC_CLKGATE, &p_clkctrl_regs->frac[1].set);
     temp = readl(&p_clkctrl_regs->frac[1].reg);
     temp &= ~CLKCTRL_FRAC_FRAC_MASK;
     temp |= pixfrac << CLKCTRL_FRAC_FRAC_OFFSET;
-    temp &= ~CLKCTRL_FRAC_CLKGATE;
     writel(temp, &p_clkctrl_regs->frac[1].reg);
+    writel(CLKCTRL_FRAC_CLKGATE, &p_clkctrl_regs->frac[1].clr);
 
-    /* 软件复位 LCDIF */
-    __soft_reset();
-    writel(LCDIF_CTRL_READ_WRITEB, &p_regs->ctrl[0].clr);
-    writel(LCDIF_CTRL_LCDIF_MASTER, &p_regs->ctrl[0].set);
+    /* 配置 LCDIF 时钟为 9MHz */
+    temp = readl(&p_clkctrl_regs->lcdif.reg);
+    temp &= ~CLKCTRL_DIS_LCDIF_CLKGATE;
+    writel(temp, &p_clkctrl_regs->lcdif.reg);
+    temp &= ~CLKCTRL_DIS_LCDIF_DIV_MASK;
+    temp |= 30 << CLKCTRL_DIS_LCDIF_DIV_OFFSET;
+    writel(temp, &p_clkctrl_regs->lcdif.reg);
+    while (readl(&p_clkctrl_regs->lcdif.reg) & CLKCTRL_DIS_LCDIF_BUSY);
+
+    __soft_reset();                                                    /* 软件复位 LCDIF */
+    writel(LCDIF_CTRL_READ_WRITEB, &p_regs->ctrl[0].clr);              /* 写入模式 */
+    writel(LCDIF_CTRL_LCDIF_MASTER, &p_regs->ctrl[0].set);             /* 主机模式 */
+    writel(LCDIF_CTRL_INPUT_DATA_SWIZZLE_MASK, &p_regs->ctrl[0].clr);  /* 不进行字节交换 */
+    writel(LCDIF_CTRL_DATA_SHIFT_DIR, &p_regs->ctrl[0].clr);           /* 数据左移 */
+    writel(LCDIF_CTRL_SHIFT_NUM_BITS_MASK, &p_regs->ctrl[0].clr);      /* 移动 0 位 */
+    writel(LCDIF_CTRL_LCD_DATABUS_WIDTH_MASK, &p_regs->ctrl[0].clr);   /* LCD 为 16 位宽 */
+    writel(LCDIF_CTRL_WORD_LENGTH_MASK, &p_regs->ctrl[0].clr);         /* 输入数据为 16 位宽 */
+
+    /* 低 16 位数据有效 */
+    writel(LCDIF_CTRL1_BYTE_PACKING_FORMAT_MASK, &p_regs->ctrl[1].clr);
+    writel(0xf << LCDIF_CTRL1_BYTE_PACKING_FORMAT_OFFSET, &p_regs->ctrl[1].set);
+
+    writel(LCDIF_CTRL_DOTCLK_MODE, &p_regs->ctrl[0].set);    /* DOTCLK 模式 */
+    writel(LCDIF_CTRL_BYPASS_COUNT, &p_regs->ctrl[0].set);   /* 连续运行 */
+
+    writel(LCDIF_VDCTRL0_VSYNC_OEB, &p_regs->vdctrl0.clr);
+    writel(LCDIF_VDCTRL0_VSYNC_POL, &p_regs->vdctrl0.clr);
+    writel(LCDIF_VDCTRL0_HSYNC_POL, &p_regs->vdctrl0.clr);
+    writel(LCDIF_VDCTRL0_DOTCLK_POL, &p_regs->vdctrl0.clr);
+    writel(LCDIF_VDCTRL0_ENABLE_POL, &p_regs->vdctrl0.set);
+    writel(LCDIF_VDCTRL0_ENABLE_PRESENT, &p_regs->vdctrl0.set);
+    writel(LCDIF_VDCTRL0_VSYNC_PERIOD_UNIT, &p_regs->vdctrl0.set);
+    writel(LCDIF_VDCTRL0_VSYNC_PULSE_WIDTH_UNIT, &p_regs->vdctrl0.set);
+
+    writel(LCDIF_VDCTRL0_VSYNC_PULSE_WIDTH_MASK, &p_regs->vdctrl0.clr);
+    writel(mode.vsync_len << LCDIF_VDCTRL0_VSYNC_PULSE_WIDTH_OFFSET, &p_regs->vdctrl0.set);
+
+    writel(mode.upper_margin + mode.lower_margin + mode.vsync_len + mode.yres, 
+          &p_regs->vdctrl1.reg);
+
+    writel((mode.hsync_len << LCDIF_VDCTRL2_HSYNC_PULSE_WIDTH_OFFSET) |
+           ((mode.left_margin + mode.right_margin + mode.hsync_len + mode.xres) << LCDIF_VDCTRL2_HSYNC_PERIOD_OFFSET),
+          &p_regs->vdctrl2.reg);
+
+    writel(((mode.left_margin + mode.hsync_len) << LCDIF_VDCTRL3_HORIZONTAL_WAIT_CNT_OFFSET) |
+           ((mode.upper_margin + mode.vsync_len) << LCDIF_VDCTRL3_VERTICAL_WAIT_CNT_OFFSET),
+          &p_regs->vdctrl3.reg);
+
+    writel((LCDIF_VDCTRL4_SYNC_SIGNALS_ON) |
+           (mode.xres << LCDIF_VDCTRL4_DOTCLK_H_VALID_DATA_CNT_OFFSET),
+          &p_regs->vdctrl4.reg);
+
+    writel((uint32_t)buf, &p_regs->cur_buf.reg);
+    writel((uint32_t)buf, &p_regs->next_buf.reg);
+
+    writel((mode.yres << LCDIF_TRANSFER_COUNT_V_COUNT_OFFSET) |
+           (mode.xres << LCDIF_TRANSFER_COUNT_H_COUNT_OFFSET),
+          &p_regs->transfer_count.reg);
+
+    writel(LCDIF_CTRL_RUN, &p_regs->ctrl[0].set);
+
+    lcd_enable();
+
+    mdelay(1000);
+
+    k = 0;
+    while (1) {
+        mdelay(100);
+        for (i = 0; i < 272; i++) {
+            for (j = 0; j < 480; j++) {
+                buf[i][j] = k;
+            }
+        }
+        k += 1;
+    }
 }
 
 /* end of file */
