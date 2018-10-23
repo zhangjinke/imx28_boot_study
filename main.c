@@ -16,6 +16,11 @@
 #include "clkctrl.h"
 #include "lcdif.h"
 
+void raise (void)
+{
+    ; /* VOID */
+}
+
 void delay_test (volatile uint32_t ms)
 {
     ms *= 7000;
@@ -27,7 +32,7 @@ void delay_test (volatile uint32_t ms)
  */
 int main (void)
 {
-    lcdif_init();
+//    lcdif_init();
 
     lcd_enable();
     led_on(LED_ERR);

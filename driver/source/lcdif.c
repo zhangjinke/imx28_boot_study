@@ -104,8 +104,6 @@ void lcd_disable (void)
     pinctrl_dout_set(__LED_PIN, 0);
 }
 
-static uint16_t buf[272][480];
-
 struct ctfb_res_modes {
     int xres;       /* visible resolution       */
     int yres;
@@ -123,6 +121,11 @@ struct ctfb_res_modes {
     int vmode;      /* see FB_VMODE_*       */
 };
 
+#define __XRES  480
+#define __YRES  272
+
+static uint16_t buf[__YRES][__XRES];
+
 struct ctfb_res_modes mode;
 
 /**
@@ -138,8 +141,8 @@ void lcdif_init (void)
     uint32_t                   temp;
     uint8_t                    pixfrac;
 
-    mode.xres = 480;
-    mode.yres = 272;
+    mode.xres = __XRES;
+    mode.yres = __YRES;
     mode.left_margin = 40;
     mode.right_margin = 5;
     mode.upper_margin = 8;
@@ -147,30 +150,9 @@ void lcdif_init (void)
     mode.hsync_len = 1;
     mode.vsync_len = 1;
 
-    for (i = 0; i < 272; i++) {
-        for (j = 0; j < 480; j++) {
-            //if ((271 == i) || (0 == i) || (479 == j) || (0 == j)) {
-            //    buf[i][j] = 0xffff;
-            //} else {
-            //    buf[i][j] = 0;
-            //}
-            if (60 * 1 > j) {
-                buf[i][j] = (0 << 12) | (0 << 6) | (0 << 0);
-            } else if (60 * 2 > j) {
-                buf[i][j] = (0 << 12) | (0 << 6) | (255 << 0);
-            } else if (60 * 3 > j) {
-                buf[i][j] = (0 << 12) | (255 << 6) | (0 << 0);
-            } else if (60 * 4 > j) {
-                buf[i][j] = (0 << 12) | (255 << 6) | (255 << 0);
-            } else if (60 * 5 > j) {
-                buf[i][j] = (255 << 12) | (0 << 6) | (0 << 0);
-            } else if (60 * 6 > j) {
-                buf[i][j] = (255 << 12) | (0 << 6) | (255 << 0);
-            } else if (60 * 7 > j) {
-                buf[i][j] = (255 << 12) | (255 << 6) | (0 << 0);
-            } else {
-                buf[i][j] = (255 << 12) | (255 << 6) | (255 << 0);
-            }
+    for (i = 0; i < __YRES; i++) {
+        for (j = 0; j < __XRES; j++) {
+            buf[i][j] = 0;
         }
     }
 
@@ -250,18 +232,62 @@ void lcdif_init (void)
 
     lcd_enable();
 
-    mdelay(1000);
+    mdelay(100);
 
-    k = 0;
     while (1) {
-        mdelay(100);
-        for (i = 0; i < 272; i++) {
-            for (j = 0; j < 480; j++) {
-                buf[i][j] = k;
+        for (i = 0; i < __YRES; i++) {
+            for (j = 0; j < __XRES; j++) {
+                if (__XRES * 1 / 8 > j) {
+                    buf[i][j] = (0 << 12) | (0 << 6) | (0 << 0);
+                } else if (__XRES * 2 / 8 > j) {
+                    buf[i][j] = (0 << 12) | (0 << 6) | (255 << 0);
+                } else if (__XRES * 3 / 8 > j) {
+                    buf[i][j] = (0 << 12) | (255 << 6) | (0 << 0);
+                } else if (__XRES * 4 / 8 > j) {
+                    buf[i][j] = (0 << 12) | (255 << 6) | (255 << 0);
+                } else if (__XRES * 5 / 8 > j) {
+                    buf[i][j] = (255 << 12) | (0 << 6) | (0 << 0);
+                } else if (__XRES * 6 / 8 > j) {
+                    buf[i][j] = (255 << 12) | (0 << 6) | (255 << 0);
+                } else if (__XRES * 7 / 8 > j) {
+                    buf[i][j] = (255 << 12) | (255 << 6) | (0 << 0);
+                } else if (__XRES * 8 / 8 > j) {
+                    buf[i][j] = (255 << 12) | (255 << 6) | (255 << 0);
+                }
+
+                //if (((0 == j) && (0 == i)) ||
+                //    ((479 == j) && (0 == i)) ||
+                //    ((479 == j) && (271 == i)) ||
+                //    ((0 == j) && (271 == i))) {
+                //    buf[i][j] = ~buf[i][j];
+                //    printf("x:%d\ty:%d\r\n", j, i);
+                //}
+
+                udelay(10);
             }
         }
-        k += 1;
+        mdelay(1000);
+
+        for (i = 0; i < __YRES; i++) {
+            for (j = 0; j < __XRES; j++) {
+                buf[i][j] = 0;
+                udelay(10);
+            }
+        }
+        mdelay(1000);
     }
+
+
+//    k = 0;
+//    while (1) {
+//        mdelay(100);
+//        for (i = 0; i < __YRES; i++) {
+//            for (j = 0; j < __XRES; j++) {
+//                buf[i][j] = k;
+//            }
+//        }
+//        k += 1;
+//    }
 }
 
 /* end of file */

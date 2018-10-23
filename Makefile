@@ -4,8 +4,9 @@ LDLAGS = -T link.lds -nostdlib -nostartfiles -static -Map "study.map"
 #LIBPATH = -lgcc -L"C:\Program Files (x86)\GNU Tools ARM Embedded\5.4 2016q2\lib\gcc\arm-none-eabi\5.4.1"
 #LIBPATH = -lgcc -L"/home/peace/workspaces/tools/gcc-linaro-7.1.1-2017.05-x86_64_arm-linux-gnueabi/lib/gcc/arm-linux-gnueabi/7.1.1"
 #LIBPATH = -lgcc -L"/home/peace/workspaces/tools/gcc-arm-none-eabi-5_4-2016q3/lib/gcc/arm-none-eabi/5.4.1/"
-LIBPATH = -lgcc -L"/c/Program Files (x86)/GNU Tools ARM Embedded/5.4 2016q3/lib/gcc/arm-none-eabi/5.4.1"
+#LIBPATH = -lgcc -L"/c/Program Files (x86)/GNU Tools ARM Embedded/5.4 2016q3/lib/gcc/arm-none-eabi/5.4.1"
 #LIBPATH = -lgcc -L"/d/Program Files/gcc-linaro-7.2.1-2017.11-i686-mingw32_arm-linux-gnueabi/lib/gcc/arm-linux-gnueabi/7.2.1"
+LIBPATH = -lgcc -L"/usr/lib/gcc-cross/arm-linux-gnueabi/5.4.0"
 
 CROSS_COMPILE ?= arm-none-eabi-
 #CROSS_COMPILE ?= arm-linux-gnueabi-
@@ -51,7 +52,7 @@ sb: study.elf
 	./sb_loader.bat
 
 bin: study.elf
-	JLink.exe -autoconnect 1 -Device ARM9 -If JTAG -JTAGConf -1,-1 -Speed 15000 -CommanderScript CommandFile.jlink
+	./JLink.exe -autoconnect 1 -Device ARM9 -If JTAG -JTAGConf -1,-1 -Speed 15000 -CommanderScript CommandFile.jlink
 
 clean :
 	@rm -rfv *.o *.map *.elf *.bin *.dis *.sb driver/source/*.o

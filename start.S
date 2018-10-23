@@ -2,17 +2,16 @@
  * \file
  * \brief 启动文件
  *
-
  * \internal
  * \par modification history
  * - 1.00 18-02-27  pea, first implementation
  * \endinternal
  */
-.global _start
 
-/*
- * ARM9 异常向量表
+/**
+ * \brief ARM9 异常向量表
  */
+.global _start
 _start:
     b   reset
     ldr pc, _undefined_instruction
@@ -23,44 +22,160 @@ _start:
     ldr pc, _irq
     ldr pc, _fiq
 
-/*
- * 间接异常向量表
+/**
+ * \brief 间接异常向量表
  */
-    .globl  _undefined_instruction
-    .globl  _software_interrupt
-    .globl  _prefetch_abort
-    .globl  _data_abort
-    .globl  _not_used
-    .globl  _irq
-    .globl  _fiq
+.globl  _undefined_instruction
+.globl  _software_interrupt
+.globl  _prefetch_abort
+.globl  _data_abort
+.globl  _not_used
+.globl  _irq
+.globl  _fiq
 
 _undefined_instruction: .word undefined_instruction
 _software_interrupt:    .word software_interrupt
-_prefetch_abort:    .word prefetch_abort
-_data_abort:        .word data_abort
-_not_used:      .word not_used
-_irq:           .word irq
-_fiq:           .word fiq
+_prefetch_abort:        .word prefetch_abort
+_data_abort:            .word data_abort
+_not_used:              .word not_used
+_irq:                   .word irq
+_fiq:                   .word fiq
 
-    .balignl 16, 0xdeadbeef
+.align 2
 
-/*
- * 中断处理函数
+/**
+ * \brief 中断处理函数
  */
-.align  5
 undefined_instruction:
+
+    /* 初始化堆栈指针 */
+    ldr sp, =0x1fffc
+
+    /* 保存现场 */
+    stmdb sp!, {r0-r12, lr}
+
+    /* 异常处理 */
+    ldr r0, =und_str
+    bl printf
+
+    /* 恢复现场 */
+    ldmia sp!, {r0-r12, pc}^
+
 software_interrupt:
+
+    /* 保存现场 */
+    stmdb sp!, {r0-r12, lr}
+
+    /* 获取软件中断参数 */
+    sub r1, lr, #4
+    ldr r1, [r1]
+    bic r1, r1, #0xff000000
+
+    /* 异常处理 */
+    ldr r0, =swi_str
+    bl printf
+
+    /* 恢复现场 */
+    ldmia sp!, {r0-r12, pc}^
+
 prefetch_abort:
+
+    /* 初始化堆栈指针 */
+    ldr sp, =0x1fffc - 0x2000
+
+    /* 保存现场 */
+    subs lr, lr, #4
+    stmdb sp!, {r0-r12, lr}
+
+    /* 异常处理 */
+    ldr r0, =pabt_str
+    bl printf
+
+    /* 恢复现场 */
+    ldmia sp!, {r0-r12, pc}^
+
 data_abort:
+
+    /* 初始化堆栈指针 */
+    ldr sp, =0x1fffc - 0x3000
+
+    /* 保存现场 */
+    subs lr, lr, #8
+    stmdb sp!, {r0-r12, lr}
+
+    /* 异常处理 */
+    ldr r0, =dabt_str
+    bl printf
+
+    /* 恢复现场 */
+    ldmia sp!, {r0-r12, pc}^
+
 not_used:
+
+    /* 初始化堆栈指针 */
+    ldr sp, =0x1fffc - 0x4000
+
+    /* 保存现场 */
+    stmdb sp!, {r0-r12, lr}
+
+    /* 异常处理 */
+    ldr r0, =not_str
+    bl printf
+
+    /* 恢复现场 */
+    ldmia sp!, {r0-r12, pc}^
+
 irq:
+
+    /* 初始化堆栈指针 */
+    ldr sp, =0x1fffc - 0x5000
+
+    /* 保存现场 */
+    subs lr, lr, #4
+    stmdb sp!, {r0-r12, lr}
+
+    /* 异常处理 */
+    ldr r0, =irq_str
+    bl printf
+
+    /* 恢复现场 */
+    ldmia sp!, {r0-r12, pc}^
+
 fiq:
-1:
-    bl  1b          /* hang and never return */
+
+    /* 初始化堆栈指针 */
+    ldr sp, =0x1fffc - 0x6000
+
+    /* 保存现场 */
+    subs lr, lr, #4
+    stmdb sp!, {r0-r12, lr}
+
+    /* 异常处理 */
+    ldr r0, =fiq_str
+    bl printf
+
+    /* 恢复现场 */
+    ldmia sp!, {r0-r12, pc}^
+
+und_str:
+    .string "undefined_instruction\r\n"
+swi_str:
+    .string "software_interrupt 0x%06x\r\n"
+pabt_str:
+    .string "prefetch_abort\r\n"
+dabt_str:
+    .string "data_abort\r\n"
+not_str:
+    .string "not_used\r\n"
+irq_str:
+    .string "irq\r\n"
+fiq_str:
+    .string "fiq\r\n"
 
 .align  2
-/*
- * 复位中断处理函数
+
+/**
+ * \brief 复位中断处理函数
  */
 reset:
 
@@ -114,7 +229,22 @@ reset:
     ldr r0, =0
     bl relocate
 
+    /* 配置中断向量表地址为 0x00000000 */
+    mrc p15, 0, r0, c1, c0, 0
+    bic r0, r0, #(1 << 13)
+    mcr p15, 0, r0, c1, c0, 0
+
+    /* 触发未定义指令异常 */
+    .word 0xdeadb0ef
+
+    /* 触发软件中断异常 */
+    swi 0x123
+    swi 0xfffffe
+
+    /* 相对跳转 */
     //bl main
+
+    /* 绝对跳转 */
     ldr pc, =main
 
 halt:
