@@ -186,6 +186,40 @@ struct imx28_lcdif_regs {
 #define LCDIF_VDCTRL4_DOTCLK_H_VALID_DATA_CNT_MASK    0x3ffff
 #define LCDIF_VDCTRL4_DOTCLK_H_VALID_DATA_CNT_OFFSET  0
 
+enum lcd_pin_polarity {
+    NORMAL = 0, /**< \brief 正常极性 */
+    INVERT = 1, /**< \brief 反转极性 */
+};
+
+/** \brief 定义引脚极性结构 */
+struct lcd_pins_polarity {
+    uint8_t vclk;  /**< \brief NORMAL=上升沿采样数据 */
+    uint8_t vden;  /**< \brief NORMAL=低电平数据有效 */
+    uint8_t hsync; /**< \brief NORMAL=低电平有效 */
+    uint8_t vsync; /**< \brief NORMAL=低电平有效 */
+};
+
+/** \brief 定义 LCD 时序结构 */
+struct lcd_time_sequence {
+    uint32_t vsw;  /**< \brief vysnc 脉冲宽度 */
+    uint32_t vbp;  /**< \brief 上边黑框, Vertical Back porch */
+    uint32_t vfp;  /**< \brief 下边黑框, Vertical Front porch */
+    uint32_t hsw;  /**< \brief hsync 脉冲宽度 */
+    uint32_t hbp;  /**< \brief 左边黑框, Horizontal Back porch */
+    uint32_t hfp;  /**< \brief 右边黑框, Horizontal Front porch */
+    uint32_t vclk; /**< \brief 像素时钟频率 */
+};
+
+/** \brief 定义 LCD 参数结构 */
+struct lcd_params {
+    struct lcd_pins_polarity pins_pol; /**< \brief 引脚极性结构 */
+    struct lcd_time_sequence time_seq; /**< \brief LCD 时序结构 */
+    uint32_t                 xres;     /**< \brief x 轴分辨率 */
+    uint32_t                 yres;     /**< \brief y 轴分辨率 */
+    uint32_t                 bpp;      /**< \brief 位数 */
+    uint32_t                 fb_base;  /**< \brief 帧缓冲区地址 */
+};
+
 /**
  * \brief 使能 LCD
  *
@@ -194,6 +228,16 @@ struct imx28_lcdif_regs {
  * \return 无
  */
 void lcd_enable (void);
+
+/**
+ * \brief 失能 LCD
+ *
+ * \param 无
+ *
+ * \return 无
+ */
+void lcd_disable (void);
+
 /**
  * \brief 初始化 LCD
  *
@@ -201,7 +245,7 @@ void lcd_enable (void);
  *
  * \return 无
  */
-void lcdif_init (void);
+void lcdif_init (struct lcd_params *p_lcd_params);
 
 #ifdef __cplusplus
 }

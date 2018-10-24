@@ -16,10 +16,7 @@
 #include "clkctrl.h"
 #include "lcdif.h"
 
-void raise (void)
-{
-    ; /* VOID */
-}
+//static uint16_t g_lcd_fb[272][480];
 
 void delay_test (volatile uint32_t ms)
 {
@@ -27,19 +24,41 @@ void delay_test (volatile uint32_t ms)
     while (ms--);
 }
 
+//struct lcd_params lcd_params = {
+//    {
+//        .vclk  = NORMAL,
+//        .vden  = NORMAL,
+//        .hsync = NORMAL,
+//        .vsync = NORMAL,
+//    },
+//    {
+//        .vsw = 1,
+//        .vbp = 8,
+//        .vfp = 8,
+//        .hsw = 1,
+//        .hbp = 40,
+//        .hfp = 5,
+//        .vclk = 9000000,
+//    },
+//    .xres    = 480,
+//    .yres    = 272,
+//    .bpp     = 16,
+//    .fb_base = (uint32_t)&g_lcd_fb[0],
+//};
+
 /**
  * \brief 主函数
  */
 int main (void)
 {
-//    lcdif_init();
+    //lcdif_init(&lcd_params);
 
-    lcd_enable();
+//    lcd_enable();
     led_on(LED_ERR);
 
     printf("hello world\r\n");
 
-#if 1
+#if 0
     if (ddr2_test(0x43f00000, 1024) != 0) {
         printf("ddr2_test failed\r\n");
     } else {

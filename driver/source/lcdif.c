@@ -131,7 +131,7 @@ struct ctfb_res_modes mode;
 /**
  * \brief 初始化 LCD
  */
-void lcdif_init (void)
+void lcdif_init (struct lcd_params *p_lcd_params)
 {
     struct imx28_lcdif_regs   *p_regs         = (struct imx28_lcdif_regs *)IMX28_LCDIF_BASE;
     struct imx28_clkctrl_regs *p_clkctrl_regs = (struct imx28_clkctrl_regs *)IMX28_CLKCTRL_BASE;

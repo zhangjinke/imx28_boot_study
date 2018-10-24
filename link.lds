@@ -15,19 +15,19 @@ SECTIONS
         _stext = .;
         start.o (.text)
         *(.text)
-    } > DDR2
+    } > OCRAM
 
     . = ALIGN(4);
     .rodata :
     {
         *(.rodata)
-    } > DDR2
+    } > OCRAM
 
     . = ALIGN(4);
     .data :
     {
         *(.data)
-    } > DDR2
+    } > OCRAM
 
     . = ALIGN(4);
     .bss :
@@ -36,5 +36,5 @@ SECTIONS
         *(.bss)
         *(.COMMON)
         _ebss = .;
-    } > DDR2
+    } > OCRAM
 }

@@ -223,11 +223,11 @@ reset:
     bl clkctrl_init
 
     /* 初始化 DDR */
-    bl ddr2_init
+    //bl ddr2_init
 
     /* 重定位到 DDR */
-    ldr r0, =0
-    bl relocate
+    //ldr r0, =0
+    //bl relocate
 
     /* 配置中断向量表地址为 0x00000000 */
     mrc p15, 0, r0, c1, c0, 0
