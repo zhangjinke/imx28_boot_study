@@ -235,11 +235,11 @@ reset:
     mcr p15, 0, r0, c1, c0, 0
 
     /* 触发未定义指令异常 */
-    .word 0xdeadb0ef
+    //.word 0xdeadb0ef
 
     /* 触发软件中断异常 */
-    swi 0x123
-    swi 0xfffffe
+    //swi 0x123
+    //swi 0xfffffe
 
     /* 相对跳转 */
     //bl main

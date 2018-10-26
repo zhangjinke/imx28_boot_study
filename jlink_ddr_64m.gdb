@@ -12,7 +12,7 @@ monitor sleep 300
 monitor endian little
 
 # Set JTAG speed to auto
-monitor speed 12000
+monitor speed 15000
 
 #initilized memery contror
 #monitor long 0x53000000 = 0x00000000

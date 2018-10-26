@@ -180,23 +180,17 @@ struct imx28_clkctrl_regs {
 #define CLKCTRL_EMI_DIV_EMI_MASK       0x3f
 #define CLKCTRL_EMI_DIV_EMI_OFFSET     0
 
-#define CLKCTRL_SAIF0_CLKGATE      (1 << 31)
-#define CLKCTRL_SAIF0_BUSY         (1 << 29)
-#define CLKCTRL_SAIF0_DIV_FRAC_EN  (1 << 16)
-#define CLKCTRL_SAIF0_DIV_MASK     0xffff
-#define CLKCTRL_SAIF0_DIV_OFFSET   0
+#define CLKCTRL_SAIF_CLKGATE      (1 << 31)
+#define CLKCTRL_SAIF_BUSY         (1 << 29)
+#define CLKCTRL_SAIF_DIV_FRAC_EN  (1 << 16)
+#define CLKCTRL_SAIF_DIV_MASK     0xffff
+#define CLKCTRL_SAIF_DIV_OFFSET   0
 
-#define CLKCTRL_SAIF1_CLKGATE      (1 << 31)
-#define CLKCTRL_SAIF1_BUSY         (1 << 29)
-#define CLKCTRL_SAIF1_DIV_FRAC_EN  (1 << 16)
-#define CLKCTRL_SAIF1_DIV_MASK     0xffff
-#define CLKCTRL_SAIF1_DIV_OFFSET   0
-
-#define CLKCTRL_DIS_LCDIF_CLKGATE      (1 << 31)
-#define CLKCTRL_DIS_LCDIF_BUSY         (1 << 29)
-#define CLKCTRL_DIS_LCDIF_DIV_FRAC_EN  (1 << 13)
-#define CLKCTRL_DIS_LCDIF_DIV_MASK     0x1fff
-#define CLKCTRL_DIS_LCDIF_DIV_OFFSET   0
+#define CLKCTRL_LCDIF_CLKGATE      (1 << 31)
+#define CLKCTRL_LCDIF_BUSY         (1 << 29)
+#define CLKCTRL_LCDIF_DIV_FRAC_EN  (1 << 13)
+#define CLKCTRL_LCDIF_DIV_MASK     0x1fff
+#define CLKCTRL_LCDIF_DIV_OFFSET   0
 
 #define CLKCTRL_ETM_CLKGATE      (1 << 31)
 #define CLKCTRL_ETM_BUSY         (1 << 29)
@@ -241,19 +235,19 @@ struct imx28_clkctrl_regs {
 #define CLKCTRL_FRAC1_HSADC       1
 #define CLKCTRL_FRAC1_GPMI        2
 
-#define CLKCTRL_CLKSEQ_BYPASS_CPU               (1 << 18)
-#define CLKCTRL_CLKSEQ_BYPASS_DIS_LCDIF         (1 << 14)
-#define CLKCTRL_CLKSEQ_BYPASS_DIS_LCDIF_BYPASS  (1 << 14)
-#define CLKCTRL_CLKSEQ_BYPASS_DIS_LCDIF_PFD     (0 << 14)
-#define CLKCTRL_CLKSEQ_BYPASS_ETM               (1 << 8)
-#define CLKCTRL_CLKSEQ_BYPASS_EMI               (1 << 7)
-#define CLKCTRL_CLKSEQ_BYPASS_SSP3              (1 << 6)
-#define CLKCTRL_CLKSEQ_BYPASS_SSP2              (1 << 5)
-#define CLKCTRL_CLKSEQ_BYPASS_SSP1              (1 << 4)
-#define CLKCTRL_CLKSEQ_BYPASS_SSP0              (1 << 3)
-#define CLKCTRL_CLKSEQ_BYPASS_GPMI              (1 << 2)
-#define CLKCTRL_CLKSEQ_BYPASS_SAIF1             (1 << 1)
-#define CLKCTRL_CLKSEQ_BYPASS_SAIF0             (1 << 0)
+#define CLKCTRL_CLKSEQ_BYPASS_CPU          (1 << 18)
+#define CLKCTRL_CLKSEQ_BYPASS_LCDIF        (1 << 14)
+#define CLKCTRL_CLKSEQ_BYPASS_LCDIF_BYPASS (1 << 14)
+#define CLKCTRL_CLKSEQ_BYPASS_LCDIF_PFD    (0 << 14)
+#define CLKCTRL_CLKSEQ_BYPASS_ETM          (1 << 8)
+#define CLKCTRL_CLKSEQ_BYPASS_EMI          (1 << 7)
+#define CLKCTRL_CLKSEQ_BYPASS_SSP3         (1 << 6)
+#define CLKCTRL_CLKSEQ_BYPASS_SSP2         (1 << 5)
+#define CLKCTRL_CLKSEQ_BYPASS_SSP1         (1 << 4)
+#define CLKCTRL_CLKSEQ_BYPASS_SSP0         (1 << 3)
+#define CLKCTRL_CLKSEQ_BYPASS_GPMI         (1 << 2)
+#define CLKCTRL_CLKSEQ_BYPASS_SAIF1        (1 << 1)
+#define CLKCTRL_CLKSEQ_BYPASS_SAIF0        (1 << 0)
 
 #define CLKCTRL_RESET_WDOG_POR_DISABLE       (1 << 5)
 #define CLKCTRL_RESET_EXTERNAL_RESET_ENABLE  (1 << 4)
@@ -271,6 +265,66 @@ struct imx28_clkctrl_regs {
 #define CLKCTRL_VERSION_MINOR_OFFSET  16
 #define CLKCTRL_VERSION_STEP_MASK     0xffff
 #define CLKCTRL_VERSION_STEP_OFFSET   0
+
+/** \brief Reference Clocks */
+#define CLK_REF_CPU   0 /**< \brief ref_cpu 时钟号 */
+#define CLK_REF_EMI   1 /**< \brief ref_emi 时钟号 */
+#define CLK_REF_IO1   2 /**< \brief ref_io1 时钟号 */
+#define CLK_REF_IO0   3 /**< \brief ref_io0 时钟号 */
+#define CLK_REF_PIX   4 /**< \brief ref_pix 时钟号 */
+#define CLK_REF_HSADC 5 /**< \brief ref_hsadc 时钟号 */
+#define CLK_REF_GPMI  6 /**< \brief ref_gpmi 时钟号 */
+#define CLK_REF_ENET  7 /**< \brief ref_enet 时钟号 */
+#define CLK_REF_PLL   8 /**< \brief ref_pll 时钟号 */
+#define CLK_REF_XTAL  9 /**< \brief ref_xtal 时钟号 */
+
+/** \brief Divided clock domains referenced from PLL or Xtal clock */
+#define CLK_P              10 /**< \brief ARM 内核时钟号 */
+#define CLK_H              11 /**< \brief AHB/APBH 时钟号 */
+#define CLK_H_FLEXCAN0_IPG 12 /**< \brief Flexcan0 Message Buffer Management (MBM) 时钟号 */
+#define CLK_H_FLEXCAN1_IPG 13 /**< \brief Flexcan1 Message Buffer Management (MBM) 时钟号 */
+#define CLK_H_FLEXCAN0     14 /**< \brief Flexcan0 时钟号 */
+#define CLK_H_FLEXCAN1     15 /**< \brief Flexcan1 时钟号 */
+#define CLK_H_ENET_SWI     16 /**< \brief Ethernet Switch 时钟号 */
+#define CLK_H_MAC0         17 /**< \brief Ethernet MAC0 时钟号 */
+#define CLK_H_MAC1         18 /**< \brief Ethernet MAC1 时钟号 */
+#define CLK_OCROM          19 /**< \brief OCROM 时钟号 */
+#define CLK_ETM            20 /**< \brief ARM etm 时钟号 */
+#define CLK_EMI            21 /**< \brief DDR 接口时钟号 */
+#define CLK_SSP0           22 /**< \brief SSP0 时钟号 */
+#define CLK_SSP1           23 /**< \brief SSP1 时钟号 */
+#define CLK_SSP2           24 /**< \brief SSP2 时钟号 */
+#define CLK_SSP3           25 /**< \brief SSP3 时钟号 */
+#define CLK_GPMI           26 /**< \brief 通用存储器接口时钟号 */
+#define CLK_SPDIF          27 /**< \brief SPDIF 时钟号 */
+#define CLK_PCMSPDIF       28 /**< \brief PCMSPDIF 时钟号 */
+#define CLK_SAIF0          29 /**< \brief SAIF0 时钟号 */
+#define CLK_SAIF1          30 /**< \brief SAIF1 时钟号 */
+#define CLK_LCDIF          31 /**< \brief LCD 接口时钟号 */
+#define CLK_HSADC          32 /**< \brief 高速 ADC 时钟号 */
+#define CLK_ENET_TIME      33 /**< \brief Ethernet 1588 timer 时钟号 */
+
+/** \brief Divided clock domains referenced from Xtal clock */
+#define CLK_X    34 /**< \brief APBX 时钟号 */
+#define CLK_UART 35 /**< \brief UART 时钟号 */
+
+/** \brief Fixed clock domains */
+#define CLK_XTAL24M         36 /**< \brief PWM and analog 24 MHz 时钟号 */
+#define CLK_32K             37 /**< \brief 32KHz 时钟号 */
+#define CLK_FLEXCAN0_NOGATE 38 /**< \brief Flexcan0 CAN Protocol Interface(CPI) 时钟号 */
+#define CLK_FLEXCAN1_NOGATE 39 /**< \brief Flexcan1 CAN Protocol Interface(CPI) 时钟号 */
+#define CLK_FLEXCAN0        40 /**< \brief Flexcan0 CAN Protocol Interface(CPI) 带门控时钟号 */
+#define CLK_FLEXCAN1        41 /**< \brief Flexcan1 CAN Protocol Interface(CPI) 带门控时钟号 */
+#define CLK_LRADC2K         42 /**< \brief 2KHz 时钟号 */
+
+/**
+ * \brief 时钟频率获取
+ *
+ * \param[in] clk_id 时钟号
+ *
+ * \return 时钟频率
+ */
+uint32_t clk_get (uint8_t clk_id);
 
 /**
  * \brief 将系统时钟恢复为默认设置

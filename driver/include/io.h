@@ -22,15 +22,15 @@ extern "C" {
 
 #define dmb()   DMB
 
-#define __arch_getb(a)          (*(volatile unsigned char *)(a))
-#define __arch_getw(a)          (*(volatile unsigned short *)(a))
-#define __arch_getl(a)          (*(volatile unsigned int *)(a))
-#define __arch_getq(a)          (*(volatile unsigned long long *)(a))
+#define __arch_getb(a)          (*(volatile uint8_t *)(a))
+#define __arch_getw(a)          (*(volatile uint16_t *)(a))
+#define __arch_getl(a)          (*(volatile uint32_t *)(a))
+#define __arch_getq(a)          (*(volatile uint64_t *)(a))
 
-#define __arch_putb(v,a)        (*(volatile unsigned char *)(a) = (v))
-#define __arch_putw(v,a)        (*(volatile unsigned short *)(a) = (v))
-#define __arch_putl(v,a)        (*(volatile unsigned int *)(a) = (v))
-#define __arch_putq(v,a)        (*(volatile unsigned long long *)(a) = (v))
+#define __arch_putb(v,a)        (*(volatile uint8_t *)(a) = (v))
+#define __arch_putw(v,a)        (*(volatile uint16_t *)(a) = (v))
+#define __arch_putl(v,a)        (*(volatile uint32_t *)(a) = (v))
+#define __arch_putq(v,a)        (*(volatile uint64_t *)(a) = (v))
 
 #define __iormb()   dmb()
 #define __iowmb()   dmb()

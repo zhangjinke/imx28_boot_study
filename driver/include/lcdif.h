@@ -201,12 +201,12 @@ struct lcd_pins_polarity {
 
 /** \brief 定义 LCD 时序结构 */
 struct lcd_time_sequence {
-    uint32_t vsw;  /**< \brief vysnc 脉冲宽度 */
-    uint32_t vbp;  /**< \brief 上边黑框, Vertical Back porch */
-    uint32_t vfp;  /**< \brief 下边黑框, Vertical Front porch */
-    uint32_t hsw;  /**< \brief hsync 脉冲宽度 */
-    uint32_t hbp;  /**< \brief 左边黑框, Horizontal Back porch */
-    uint32_t hfp;  /**< \brief 右边黑框, Horizontal Front porch */
+    uint16_t vsw;  /**< \brief vysnc 脉冲宽度 */
+    uint16_t vbp;  /**< \brief 上边黑框, Vertical Back porch */
+    uint16_t vfp;  /**< \brief 下边黑框, Vertical Front porch */
+    uint16_t hsw;  /**< \brief hsync 脉冲宽度 */
+    uint16_t hbp;  /**< \brief 左边黑框, Horizontal Back porch */
+    uint16_t hfp;  /**< \brief 右边黑框, Horizontal Front porch */
     uint32_t vclk; /**< \brief 像素时钟频率 */
 };
 
@@ -214,10 +214,10 @@ struct lcd_time_sequence {
 struct lcd_params {
     struct lcd_pins_polarity pins_pol; /**< \brief 引脚极性结构 */
     struct lcd_time_sequence time_seq; /**< \brief LCD 时序结构 */
-    uint32_t                 xres;     /**< \brief x 轴分辨率 */
-    uint32_t                 yres;     /**< \brief y 轴分辨率 */
-    uint32_t                 bpp;      /**< \brief 位数 */
-    uint32_t                 fb_base;  /**< \brief 帧缓冲区地址 */
+    uint16_t                 xres;     /**< \brief x 轴分辨率 */
+    uint16_t                 yres;     /**< \brief y 轴分辨率 */
+    uint8_t                  bpp;      /**< \brief 位数 */
+    void                    *p_fb;     /**< \brief 指向帧缓冲区的指针 */
 };
 
 /**

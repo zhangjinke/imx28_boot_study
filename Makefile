@@ -1,5 +1,5 @@
 
-CFLAGS = -mtune=arm926ej-s -nostdlib -nostartfiles -ffreestanding -static -g3 -Wall -O0 -I"driver/include" -I"driver/source"
+CFLAGS = -mtune=arm926ej-s -nostdlib -nostartfiles -ffreestanding -static -g3 -Wall -O0 -I"driver/include"
 LDLAGS = -T link.lds -nostdlib -nostartfiles -static -Map "study.map"
 #LIBPATH = -lgcc -L"C:\Program Files (x86)\GNU Tools ARM Embedded\5.4 2016q2\lib\gcc\arm-none-eabi\5.4.1"
 #LIBPATH = -lgcc -L"/home/peace/workspaces/tools/gcc-linaro-7.1.1-2017.05-x86_64_arm-linux-gnueabi/lib/gcc/arm-linux-gnueabi/7.1.1"
@@ -25,18 +25,18 @@ OBJS = start.o main.o
 OBJS += driver/source/led.o
 OBJS += driver/source/delay.o
 OBJS += driver/source/duart.o
-#OBJS += driver/source/ddr2.o
+OBJS += driver/source/ddr2.o
 OBJS += driver/source/clkctrl.o
 #OBJS += driver/source/relocate.o
 OBJS += driver/source/power.o
-#OBJS += driver/source/lcdif.o
+OBJS += driver/source/lcdif.o
 OBJS += driver/source/pinctrl.o
 
 all: study.elf 
 
 study.elf : $(OBJS)
 	$(LD) $(LDLAGS) $^ -o $@ $(LIBPATH)
-	$(OBJCOPY) -O binary -S $@ study.bin
+#	$(OBJCOPY) -O binary -S $@ study.bin
 	$(OBJDUMP) -D $@ > study.dis
 	$(SIZE) --format=berkeley "$@"
 

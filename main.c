@@ -15,8 +15,33 @@
 #include "ddr2.h"
 #include "clkctrl.h"
 #include "lcdif.h"
+#include "pic.h"
 
-//static uint16_t g_lcd_fb[272][480];
+/** \brief LCD 帧缓冲区 */
+static uint16_t g_lcd_fb[272][480];
+
+/** \brief LCD 参数结构定义 */
+static struct lcd_params lcd_params = {
+    {
+        .vclk  = NORMAL,
+        .vden  = NORMAL,
+        .hsync = NORMAL,
+        .vsync = NORMAL,
+    },
+    {
+        .vsw = 1,
+        .vbp = 8,
+        .vfp = 8,
+        .hsw = 1,
+        .hbp = 40,
+        .hfp = 5,
+        .vclk = 9000000,
+    },
+    .xres = 480,
+    .yres = 272,
+    .bpp  = 16,
+    .p_fb = &g_lcd_fb[0][0],
+};
 
 void delay_test (volatile uint32_t ms)
 {
@@ -24,41 +49,73 @@ void delay_test (volatile uint32_t ms)
     while (ms--);
 }
 
-//struct lcd_params lcd_params = {
-//    {
-//        .vclk  = NORMAL,
-//        .vden  = NORMAL,
-//        .hsync = NORMAL,
-//        .vsync = NORMAL,
-//    },
-//    {
-//        .vsw = 1,
-//        .vbp = 8,
-//        .vfp = 8,
-//        .hsw = 1,
-//        .hbp = 40,
-//        .hfp = 5,
-//        .vclk = 9000000,
-//    },
-//    .xres    = 480,
-//    .yres    = 272,
-//    .bpp     = 16,
-//    .fb_base = (uint32_t)&g_lcd_fb[0],
-//};
-
 /**
  * \brief 主函数
  */
 int main (void)
 {
-    //lcdif_init(&lcd_params);
+    uint32_t i;
+    uint32_t j;
 
-//    lcd_enable();
+    printf("clk_p: %dHz\r\n", clk_get(CLK_P));
+    printf("clk_h: %dHz\r\n", clk_get(CLK_H));
+    printf("clk_lcdif: %dHz\r\n", clk_get(CLK_LCDIF));
+    lcdif_init(&lcd_params);
+    printf("clk_lcdif: %dHz\r\n", clk_get(CLK_LCDIF));
+
+    lcd_enable();
     led_on(LED_ERR);
 
     printf("hello world\r\n");
 
+    mdelay(100);
+
 #if 0
+    while (1) {
+        for (i = 0; i < lcd_params.yres; i++) {
+            for (j = 0; j < lcd_params.xres; j++) {
+                if (lcd_params.xres * 1 / 8 > j) {
+                    g_lcd_fb[i][j] = (0 << 12) | (0 << 6) | (0 << 0);
+                } else if (lcd_params.xres * 2 / 8 > j) {
+                    g_lcd_fb[i][j] = (0 << 12) | (0 << 6) | (255 << 0);
+                } else if (lcd_params.xres * 3 / 8 > j) {
+                    g_lcd_fb[i][j] = (0 << 12) | (255 << 6) | (0 << 0);
+                } else if (lcd_params.xres * 4 / 8 > j) {
+                    g_lcd_fb[i][j] = (0 << 12) | (255 << 6) | (255 << 0);
+                } else if (lcd_params.xres * 5 / 8 > j) {
+                    g_lcd_fb[i][j] = (uint16_t)(255 << 12) | (0 << 6) | (0 << 0);
+                } else if (lcd_params.xres * 6 / 8 > j) {
+                    g_lcd_fb[i][j] = (uint16_t)(255 << 12) | (0 << 6) | (255 << 0);
+                } else if (lcd_params.xres * 7 / 8 > j) {
+                    g_lcd_fb[i][j] = (uint16_t)(255 << 12) | (255 << 6) | (0 << 0);
+                } else if (lcd_params.xres * 8 / 8 > j) {
+                    g_lcd_fb[i][j] = (uint16_t)(255 << 12) | (255 << 6) | (255 << 0);
+                }
+
+                //if (((0 == j) && (0 == i)) ||
+                //    ((479 == j) && (0 == i)) ||
+                //    ((479 == j) && (271 == i)) ||
+                //    ((0 == j) && (271 == i))) {
+                //    g_lcd_fb[i][j] = ~g_lcd_fb[i][j];
+                //    printf("x:%d\ty:%d\r\n", j, i);
+                //}
+
+                udelay(10);
+            }
+        }
+        mdelay(1000);
+
+        for (i = 0; i < lcd_params.yres; i++) {
+            for (j = 0; j < lcd_params.xres; j++) {
+                g_lcd_fb[i][j] = 0;
+                udelay(10);
+            }
+        }
+        mdelay(1000);
+    }
+#endif
+
+#if 1
     if (ddr2_test(0x43f00000, 1024) != 0) {
         printf("ddr2_test failed\r\n");
     } else {
@@ -76,9 +133,15 @@ int main (void)
 #endif
 
     while (1) {
+        for (i = 0; i < sizeof(g_lcd_fb) / 4; i++) {
+            *((uint32_t *)g_lcd_fb + i) = *((uint32_t *)pic0 + i);
+        }
         led_on(LED_ERR);
         mdelay(1000);
 
+        for (i = 0; i < sizeof(g_lcd_fb) / 4; i++) {
+            *((uint32_t *)g_lcd_fb + i) = *((uint32_t *)pic1 + i);
+        }
         led_off(LED_ERR);
         mdelay(1000);
     }
