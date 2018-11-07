@@ -48,9 +48,6 @@ _fiq:                   .word fiq
  */
 undefined_instruction:
 
-    /* 初始化堆栈指针 */
-    ldr sp, =0x1fffc
-
     /* 保存现场 */
     stmdb sp!, {r0-r12, lr}
 
@@ -62,9 +59,6 @@ undefined_instruction:
     ldmia sp!, {r0-r12, pc}^
 
 software_interrupt:
-
-    /* 保存现场 */
-    stmdb sp!, {r0-r12, lr}
 
     /* 获取软件中断参数 */
     sub r1, lr, #4
@@ -80,9 +74,6 @@ software_interrupt:
 
 prefetch_abort:
 
-    /* 初始化堆栈指针 */
-    ldr sp, =0x1fffc - 0x2000
-
     /* 保存现场 */
     subs lr, lr, #4
     stmdb sp!, {r0-r12, lr}
@@ -95,9 +86,6 @@ prefetch_abort:
     ldmia sp!, {r0-r12, pc}^
 
 data_abort:
-
-    /* 初始化堆栈指针 */
-    ldr sp, =0x1fffc - 0x3000
 
     /* 保存现场 */
     subs lr, lr, #8
@@ -112,9 +100,6 @@ data_abort:
 
 not_used:
 
-    /* 初始化堆栈指针 */
-    ldr sp, =0x1fffc - 0x4000
-
     /* 保存现场 */
     stmdb sp!, {r0-r12, lr}
 
@@ -127,24 +112,17 @@ not_used:
 
 irq:
 
-    /* 初始化堆栈指针 */
-    ldr sp, =0x1fffc - 0x5000
-
     /* 保存现场 */
     subs lr, lr, #4
     stmdb sp!, {r0-r12, lr}
 
     /* 异常处理 */
-    ldr r0, =irq_str
-    bl printf
+    bl __irq_handler
 
     /* 恢复现场 */
     ldmia sp!, {r0-r12, pc}^
 
 fiq:
-
-    /* 初始化堆栈指针 */
-    ldr sp, =0x1fffc - 0x6000
 
     /* 保存现场 */
     subs lr, lr, #4
@@ -179,11 +157,41 @@ fiq_str:
  */
 reset:
 
-    /* 设置 CPU 为 SVC32 模式，并关闭 FIQ 和 IRQ */
+    /* 关闭 FIQ 和 IRQ */
     mrs r0, cpsr
-    bic r0, r0, #0x1f
-    orr r0, r0, #0xd3
+    orr r0, r0, #0xc0
     msr cpsr, r0
+
+    /* 切换到 fiq 模式，并初始化 sp */
+    bic r0, r0, #0x1f
+    orr r0, r0, #0x11
+    msr cpsr, r0
+    ldr sp, =0x1fffc
+
+    /* 切换到 irq 模式，并初始化 sp */
+    bic r0, r0, #0x1f
+    orr r0, r0, #0x12
+    msr cpsr, r0
+    ldr sp, =0x1fffc - 0x1000
+
+    /* 切换到 abort 模式，并初始化 sp */
+    bic r0, r0, #0x1f
+    orr r0, r0, #0x17
+    msr cpsr, r0
+    ldr sp, =0x1fffc - 0x2000
+
+    /* 切换到 und 模式，并初始化 sp */
+    bic r0, r0, #0x1f
+    orr r0, r0, #0x1b
+    msr cpsr, r0
+    ldr sp, =0x1fffc - 0x3000
+
+    /* 切换到 svc 模式，并初始化 sp */
+    bic r0, r0, #0x1f
+    orr r0, r0, #0x13
+    msr cpsr, r0
+    ldr sp, =0x1fffc - 0x4000
+
 
 //    /* 关闭 D cache 前先 flush */
 //    mov r0, #0
@@ -202,8 +210,8 @@ reset:
 //    orr r0, r0, #0x00000002 /* set bit 1 (A) Align */
 //    mcr p15, 0, r0, c1, c0, 0
 
-    /* 设置栈指针 */
-    ldr sp, =0x1fffc
+    /* 清零 bss 段 */
+    bl bss_init
 
     /* 初始化 LED */
     bl led_init
@@ -218,6 +226,9 @@ reset:
     /* 初始化调试串口 */
     ldr r0, =115200
     bl duart_init
+
+    /* 初始化电源 */
+    bl power_init
 
     /* 初始化时钟 */
     bl clkctrl_init

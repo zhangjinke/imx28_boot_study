@@ -22,15 +22,17 @@ SIZE    = $(CROSS_COMPILE)size
 GDB     = $(CROSS_COMPILE)gdb
 
 OBJS = start.o main.o
+OBJS += driver/source/arm_int_gcc.o
 OBJS += driver/source/led.o
 OBJS += driver/source/delay.o
 OBJS += driver/source/duart.o
-OBJS += driver/source/ddr2.o
+#OBJS += driver/source/ddr2.o
 OBJS += driver/source/clkctrl.o
-#OBJS += driver/source/relocate.o
+OBJS += driver/source/relocate.o
 OBJS += driver/source/power.o
-OBJS += driver/source/lcdif.o
+#OBJS += driver/source/lcdif.o
 OBJS += driver/source/pinctrl.o
+OBJS += driver/source/icoll.o
 
 all: study.elf 
 

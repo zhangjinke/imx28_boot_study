@@ -39,7 +39,7 @@ uint32_t systick_get (void)
 void udelay (uint32_t us)
 {
     uint32_t start, cur;
-    
+
     start = cur = HW_DIGCTL_MICROSECONDS;
 
     while (cur < start + us) {
@@ -52,7 +52,13 @@ void udelay (uint32_t us)
  */
 void mdelay (uint32_t ms)
 {
-    udelay(1000 * ms);
+    uint32_t start, cur;
+
+    start = cur = HW_DIGCTL_MICROSECONDS;
+
+    while (cur < start + ms * 1000) {
+        cur = HW_DIGCTL_MICROSECONDS;
+    }
 }
 
 /* end of file */

@@ -15,7 +15,7 @@ SECTIONS
         _stext = .;
         start.o (.text)
         *(.text)
-    } > DDR2
+    } > OCRAM
 
     . = ALIGN(4);
     .rodata :

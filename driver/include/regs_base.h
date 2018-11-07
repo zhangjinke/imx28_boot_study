@@ -15,7 +15,7 @@
 extern "C" {
 #endif
 
-#define IMX28_ICOL_BASE       0x80000000
+#define IMX28_ICOLL_BASE      0x80000000
 #define IMX28_HSADC_BASE      0x80002000
 #define IMX28_APBH_BASE       0x80004000
 #define IMX28_PERFMON_BASE    0x80006000

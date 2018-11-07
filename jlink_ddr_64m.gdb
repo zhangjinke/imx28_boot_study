@@ -1,10 +1,4 @@
-#connect to jlink jdbserver
-target remote localhost:2331
-
-#monitor long 0x800401e0 = 0x00000002
 monitor sleep 500
-
-#reset target
 monitor reset
 monitor sleep 300
 
@@ -14,18 +8,14 @@ monitor endian little
 # Set JTAG speed to auto
 monitor speed 15000
 
-#initilized memery contror
-#monitor long 0x53000000 = 0x00000000
-
-#wait for moment¡§
+#wait for momentÂ¨
 monitor sleep 20
-
 
 #set cpu to svc mode(on cpu reset)
 monitor reg cpsr = 0xd3
 
 #debug in ram
-monitor reg pc   = 0x40000000
+monitor reg pc   = 0x00000000
 
 monitor long 0x800400F0 = 0x80000002
 monitor long 0x800401B0 = 0x92921613
@@ -235,13 +225,3 @@ monitor long 0x800e02f4 = 0xffffffff
 
 #**  start controller **#
 monitor long 0x800e0040 = 0x00000001
-
-
-#load the debug image
-load
-
-# Set break points
-break aw_main
-#break main
-
-#debug begin

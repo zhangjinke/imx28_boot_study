@@ -15,33 +15,34 @@
 #include "ddr2.h"
 #include "clkctrl.h"
 #include "lcdif.h"
-#include "pic.h"
+#include "icoll.h"
+//#include "pic.h"
 
-/** \brief LCD 帧缓冲区 */
-static uint16_t g_lcd_fb[272][480];
-
-/** \brief LCD 参数结构定义 */
-static struct lcd_params lcd_params = {
-    {
-        .vclk  = NORMAL,
-        .vden  = NORMAL,
-        .hsync = NORMAL,
-        .vsync = NORMAL,
-    },
-    {
-        .vsw = 1,
-        .vbp = 8,
-        .vfp = 8,
-        .hsw = 1,
-        .hbp = 40,
-        .hfp = 5,
-        .vclk = 9000000,
-    },
-    .xres = 480,
-    .yres = 272,
-    .bpp  = 16,
-    .p_fb = &g_lcd_fb[0][0],
-};
+///** \brief LCD 帧缓冲区 */
+//static uint16_t g_lcd_fb[272][480];
+//
+///** \brief LCD 参数结构定义 */
+//static struct lcd_params lcd_params = {
+//    {
+//        .vclk  = NORMAL,
+//        .vden  = NORMAL,
+//        .hsync = NORMAL,
+//        .vsync = NORMAL,
+//    },
+//    {
+//        .vsw = 1,
+//        .vbp = 8,
+//        .vfp = 8,
+//        .hsw = 1,
+//        .hbp = 40,
+//        .hfp = 5,
+//        .vclk = 9000000,
+//    },
+//    .xres = 480,
+//    .yres = 272,
+//    .bpp  = 16,
+//    .p_fb = &g_lcd_fb[0][0],
+//};
 
 void delay_test (volatile uint32_t ms)
 {
@@ -54,16 +55,21 @@ void delay_test (volatile uint32_t ms)
  */
 int main (void)
 {
-    uint32_t i;
-    uint32_t j;
+//    uint32_t i;
+//    uint32_t j;
+
+    /* 初始化中断控制器 */
+    icoll_init();
+
+    printf("\r\n\r\n");
 
     printf("clk_p: %dHz\r\n", clk_get(CLK_P));
     printf("clk_h: %dHz\r\n", clk_get(CLK_H));
     printf("clk_lcdif: %dHz\r\n", clk_get(CLK_LCDIF));
-    lcdif_init(&lcd_params);
-    printf("clk_lcdif: %dHz\r\n", clk_get(CLK_LCDIF));
+//    lcdif_init(&lcd_params);
+//    printf("clk_lcdif: %dHz\r\n", clk_get(CLK_LCDIF));
 
-    lcd_enable();
+//    lcd_enable();
     led_on(LED_ERR);
 
     printf("hello world\r\n");
@@ -115,7 +121,7 @@ int main (void)
     }
 #endif
 
-#if 1
+#if 0
     if (ddr2_test(0x43f00000, 1024) != 0) {
         printf("ddr2_test failed\r\n");
     } else {
@@ -133,15 +139,15 @@ int main (void)
 #endif
 
     while (1) {
-        for (i = 0; i < sizeof(g_lcd_fb) / 4; i++) {
-            *((uint32_t *)g_lcd_fb + i) = *((uint32_t *)pic0 + i);
-        }
+//        for (i = 0; i < sizeof(g_lcd_fb) / 4; i++) {
+//            *((uint32_t *)g_lcd_fb + i) = *((uint32_t *)pic0 + i);
+//        }
         led_on(LED_ERR);
         mdelay(1000);
 
-        for (i = 0; i < sizeof(g_lcd_fb) / 4; i++) {
-            *((uint32_t *)g_lcd_fb + i) = *((uint32_t *)pic1 + i);
-        }
+//        for (i = 0; i < sizeof(g_lcd_fb) / 4; i++) {
+//            *((uint32_t *)g_lcd_fb + i) = *((uint32_t *)pic1 + i);
+//        }
         led_off(LED_ERR);
         mdelay(1000);
     }
