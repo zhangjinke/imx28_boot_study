@@ -1,5 +1,8 @@
 
-CFLAGS = -mtune=arm926ej-s -nostdlib -nostartfiles -ffreestanding -static -g3 -Wall -O0 -I"driver/include"
+INCLUDE_PATH = -I"driver/include"
+INCLUDE_PATH += -I"malloc"
+
+CFLAGS = -mtune=arm926ej-s -nostdlib -nostartfiles -ffreestanding -static -g3 -Wall -O0 $(INCLUDE_PATH)
 LDLAGS = -T link.lds -nostdlib -nostartfiles -static -Map "study.map"
 #LIBPATH = -lgcc -L"C:\Program Files (x86)\GNU Tools ARM Embedded\5.4 2016q2\lib\gcc\arm-none-eabi\5.4.1"
 #LIBPATH = -lgcc -L"/home/peace/workspaces/tools/gcc-linaro-7.1.1-2017.05-x86_64_arm-linux-gnueabi/lib/gcc/arm-linux-gnueabi/7.1.1"
@@ -33,6 +36,8 @@ OBJS += driver/source/power.o
 #OBJS += driver/source/lcdif.o
 OBJS += driver/source/pinctrl.o
 OBJS += driver/source/icoll.o
+
+OBJS += malloc/my_malloc.o
 
 all: study.elf 
 
