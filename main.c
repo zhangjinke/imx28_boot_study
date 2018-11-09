@@ -17,12 +17,16 @@
 #include "lcdif.h"
 #include "icoll.h"
 #include "my_malloc.h"
+#include <string.h>
 
 /**
  * \brief 主函数
  */
 int main (void)
 {
+    uint8_t buf[10];
+
+    memset(buf, 0, 10);
 
     /* 堆初始化 */
     my_mem_init(MEM_DDR);
@@ -32,8 +36,8 @@ int main (void)
 
     printf("\r\n\r\n");
 
-    printf("clk_p: %dHz\r\n", clk_get(CLK_P));
-    printf("clk_h: %dHz\r\n", clk_get(CLK_H));
+    printf("clk_p: %luHz\r\n", clk_get(CLK_P));
+    printf("clk_h: %luHz\r\n", clk_get(CLK_H));
 
     printf("hello world\r\n");
 

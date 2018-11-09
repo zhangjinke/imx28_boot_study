@@ -10,12 +10,17 @@ SECTIONS
     . = 0x00000000;
 
     . = ALIGN(4);
-    .text :
+    .text_start :
     {
         _stext = .;
         start.o (.text)
-        *(.text)
     } > OCRAM
+
+    . = ALIGN(4);
+    .text :
+    {
+        *(.text)
+    } > DDR2
 
     . = ALIGN(4);
     .rodata :
